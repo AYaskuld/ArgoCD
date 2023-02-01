@@ -1,0 +1,4 @@
+workernode:
+  privateip: "172.31.20.51"
+nfs:
+  privateip: "172.31.25.228"

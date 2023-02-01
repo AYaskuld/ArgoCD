@@ -1,0 +1,164 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: monitor-deploy
+  labels:
+    app: myapp
+    project: monitor
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: monitor
+      app: myapp
+  template:
+    metadata:
+      labels:
+        project: monitor
+        app: myapp
+    spec:
+      containers:
+      - name: container-apache
+        image: ubuntu/apache2:latest
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - mountPath: /etc/apache2/sites-available/000-default.conf
+          subPath: 000-default.conf
+          name: apache-conf
+        - mountPath: /etc/apache2/ports.conf
+          subPath: ports.conf
+          name: ports
+        - mountPath: /var/log/apache2
+          name: logs-apache
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+          requests:
+            cpu: 200m
+            memory: 250Mi
+
+      - name: container-nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /var/log/nginx
+          name: logs-nginx
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+          requests:
+            cpu: 200m
+            memory: 250Mi
+
+
+
+      - name: exporter-container
+        image: prom/node-exporter:latest
+        ports:
+        - containerPort: 9100
+        resources:
+          limits:
+            cpu: 200m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 250Mi
+
+      - name: prometheus-container
+        image: prom/prometheus:latest
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - mountPath: /etc/prometheus/prometheus.yml
+          subPath: prometheus.yml
+          name: prom-conf
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 250Mi
+
+      - name: container-loki
+        image: grafana/loki:latest
+        ports:
+        - containerPort: 3100
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 150m
+            memory: 250Mi
+
+
+      - name: container-promtail
+        image: grafana/promtail:latest
+        volumeMounts:
+        - mountPath: /etc/promtail/config.yml
+          subPath: config.yml
+          name: promtail-conf
+        - mountPath: /var/log
+          name: common-logs
+        resources:
+          limits:
+            cpu: 200m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 250Mi
+
+      - name: container-grafana
+        image: grafana/grafana:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+          requests:
+            cpu: 250m
+            memory: 500Mi
+
+      volumes:
+      - name: prom-conf
+        configMap:
+          name: prom-conf
+
+      - name: apache-conf
+        configMap:
+          name: apache-conf
+
+      - name: ports
+        configMap:
+          name: ports.conf
+
+      - name: promtail-conf
+        configMap:
+          name: promtail-conf
+
+      - name: common-logs
+        persistentVolumeClaim:
+          claimName: pvc-promt
+
+      - name: logs-apache
+        persistentVolumeClaim:
+          claimName: pvc-apache
+
+      - name: logs-nginx
+        persistentVolumeClaim:
+          claimName: pvc-nginx
+#        nfs:
+#          server: 172.31.16.161
+#          path: /var/nfs/logs/nginx
+#          readOnly: true
+
+
+
