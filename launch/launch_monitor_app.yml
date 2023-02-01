@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AYaskuld/K8s_monitor.git'
+    repoURL: 'git@github.com:AYaskuld/ArgoCD.git'
     targetRevision: HEAD
-    path: launch
+    path: appliction
   destination: 
     server: https://kubernetes.default.svc
     namespace: default
