@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitor-application
+  name: hpa-application
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AYaskuld/ArgoCD.git'
+    repoURL: {{ .Values.githubssh.link }}
     targetRevision: HEAD
-    path: monitor
-  destination: 
+    path: hpa
+  destination:
     server: https://kubernetes.default.svc
     namespace: default
 

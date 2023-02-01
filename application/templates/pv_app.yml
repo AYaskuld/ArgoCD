@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AYaskuld/ArgoCD.git'
+    repoURL: {{ .Values.githubssh.link }}
     targetRevision: HEAD
     path: pv
     helm:

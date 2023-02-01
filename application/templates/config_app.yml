@@ -1,14 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitor-pvc-application
+  name: monitor-config-application
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'git@github.com:AYaskuld/ArgoCD.git'
+    repoURL: {{ .Values.githubssh.link }}
     targetRevision: HEAD
-    path: pvc
+    path: config_app
+    helm:
+      valueFiles:
+        - values.yaml
   destination: 
     server: https://kubernetes.default.svc
     namespace: default
