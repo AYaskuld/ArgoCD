@@ -8,7 +8,7 @@ spec:
     schedule: '10 1 * * *'
     duration: 1h
     applications:
-    - '*-prod'
+    - '*'
     manualSync: true
   - kind: deny
     schedule: '0 22 * * *'
