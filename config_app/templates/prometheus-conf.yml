@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prom-conf
+  name: prometheus-conf
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 data:
