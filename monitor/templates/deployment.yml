@@ -77,7 +77,7 @@ spec:
         volumeMounts:
         - mountPath: /etc/prometheus/prometheus.yml
           subPath: prometheus.yml
-          name: prom-conf
+          name: prometheus-conf
         resources:
           limits:
             cpu: 500m
@@ -128,9 +128,9 @@ spec:
             memory: 500Mi
 
       volumes:
-      - name: prom-conf
+      - name: prometheus-conf
         configMap:
-          name: prom-conf
+          name: prometheus-conf
 
       - name: apache-conf
         configMap:
