@@ -12,3 +12,22 @@ repository URL: https://github.com/codefresh-contrib/gitops-certification-exampl
 path: ./argo-rollouts-controller  
 Cluster: https://kubernetes.default.svc (this is the same cluster where ArgoCD is installed)  
 Namespace: argo-rollouts  
+
+---
+
+Argo Rollouts also has an optional CLI that can be used for monitoring and promoting deployments  
+
+We have already installed kubectl argo rollouts for you in this exercise. And we can use it to monitor the first deployment  
+
+Run the following  
+```bash
+kubectl argo rollouts list rollouts
+kubectl argo rollouts status simple-rollout
+kubectl argo rollouts get rollout simple-rollout
+```
+The last command shows the status of the rollout. Since this is the first version there is only one replicaset with two pods.  
+
+You can also see this with  
+```bash
+kubectl get rs
+```
